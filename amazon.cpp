@@ -9,6 +9,7 @@
 #include "db_parser.h"
 #include "product_parser.h"
 #include "util.h"
+#include "mydatastore.h"
 
 using namespace std;
 struct ProdNameSorter {
@@ -29,7 +30,7 @@ int main(int argc, char* argv[])
      * Declare your derived DataStore object here replacing
      *  DataStore type to your derived type
      ****************/
-    DataStore ds;
+    MyDataStore ds;
 
 
 
@@ -100,16 +101,76 @@ int main(int argc, char* argv[])
                 done = true;
             }
 	    /* Add support for other commands here */
-
-
-
-
-            else {
-                cout << "Unknown command" << endl;
-            }
+           // command for add
+           else if(cmd == "ADD")
+           {
+             string username;
+             int hitIdx;
+             // reads in the username, and hit index from stringstream
+             if( ss >> username >> hitIdx)
+             {
+               // checks if hits is empty and displays an error message 
+               if(hits.empty())
+                {  
+                      cout << "Invalid request" << endl;
+                }
+                else
+                {
+                   // decrements hit index and checks if hit index is in range, then add username and hit index to cart
+                  hitIdx--;
+                  if(hitIdx >= 0 && hitIdx < static_cast<int>(hits.size()))
+                  {  
+                    ds.addToCart(username, hitIdx);
+                  }
+                  else
+                  {
+                    cout << "Invalid request" << endl;
+                  }
+                }
+             }
+             else
+             {
+               cout << "Invalid request" << endl;
+             }
+           }
+            //viewcart command
+           else if ( cmd == "VIEWCART" ) 
+           {
+            string username;
+             // reads in username from stringstream, and calls viewcart using username 
+             if(ss >> username) 
+             {
+               ds.viewCart(username);
+             }   
+             else 
+             {
+               cout << "Invalid username" << endl;
+             }
+           }
+           // buycart command 
+           else if ( cmd == "BUYCART" )
+           {
+             string username;
+             // reads in the username from stringstream and calls buycart
+             if(ss >> username) 
+             {
+               ds.buyCart(username);
+             }
+             else 
+             {
+               cout << "Invalid username" << endl;
+             }
+           }
+            
+           else 
+           {
+              cout << "Unknown command" << endl;
+           }
         }
 
     }
+    
+    
     return 0;
 }
 
